@@ -6,18 +6,21 @@ import './bootstrap.min.css';
 import { Container } from 'react-bootstrap';
 import HomeScreen from './component/HomeScreen';
 import ProductScreen from './component/ProductScreen';
+import CartScreen from './component/CartScreen';
+
 //import 'bootstrap';
 
 function App() {
   return (
-    <Router>
+  <Router>
       <React.Fragment>
         <Header/>
           <main className="py-3">
             <Container>
               <Route path='/' component={HomeScreen} exact/>
               <Route path='/product/:id' component={ProductScreen}/>
-            </Container>
+              <Route path='/cart/:id?' component={CartScreen}/>
+              </Container>
           </main>
         <Footer/>
       </React.Fragment>
