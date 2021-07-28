@@ -9,6 +9,9 @@ ORDER_PAY_REQUEST,
 ORDER_PAY_FAIL,
 ORDER_PAY_SUCCESS,
 ORDER_PAY_RESET,
+ORDER_LIST_MY_REQUEST,
+ORDER_LIST_MY_FAIL,
+ORDER_LIST_MY_SUCCESS,
 } from '../constants/orderConstants';
 import axios from 'axios';
 import { logout } from './userActions'
@@ -88,7 +91,7 @@ export const payOrder=(orderId,paymentResult)=>async(dispatch,getState)=>{
         Authorization:`Bearer ${userInfo.token}`,
       }
     }
-    const {data}=axios.put(`/api/orders/${orderId}/pay`,paymentResult,config);
+    const {data}=await axios.put(`/api/orders/${orderId}/pay`,paymentResult,config);
     dispatch({
       type:ORDER_PAY_SUCCESS,
       payload:data
@@ -103,6 +106,39 @@ export const payOrder=(orderId,paymentResult)=>async(dispatch,getState)=>{
     }
     dispatch({
       type: ORDER_PAY_FAIL,
+      payload:message,
+    })
+  }
+}
+
+export const listMyOrders=()=>async(dispatch,getState)=>{
+  try{
+    dispatch({
+      type:ORDER_LIST_MY_REQUEST,
+    })
+    const {
+      userLogin:{userInfo},
+    }=getState();
+    const config={
+      headers:{
+        Authorization:`Bearer ${userInfo.token}`,
+      }
+    }
+    const {data}=await axios.get(`/api/orders/myOrders`,config);
+    dispatch({
+      type:ORDER_LIST_MY_SUCCESS,
+      payload:data
+    })
+  }catch(error){
+    const message =
+      error.response && error.response.data.message
+        ? error.response.data.message
+        : error.message
+    if (message === 'Not authorized, token failed') {
+      dispatch(logout())
+    }
+    dispatch({
+      type: ORDER_LIST_MY_FAIL,
       payload:message,
     })
   }
